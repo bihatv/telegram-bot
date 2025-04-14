@@ -137,7 +137,7 @@ if __name__ == '__main__':
     asyncio.get_event_loop().create_task(auto_ping())
 
     application.run_polling()
-USER_DATA:
-)
+
+
 
 
