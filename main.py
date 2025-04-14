@@ -1,12 +1,11 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Application, CommandHandler, CallbackQueryHandler,
-    MessageHandler, filters, ConversationHandler, ContextTypes
+    ContextTypes
 )
 import logging
 import datetime
 import asyncio
-import aiocron
 import requests
 from flask import Flask
 from threading import Thread
@@ -16,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- Config ---
-TOKEN = "8083196694:AAGYjAtGhlLXv-ixj2l0FgcE0ic4c5ckq4A"
+TOKEN = "8097927539:AAE4iAQS-O6pS27x0e3FQuVQY7gZE2qYXbI"
 GROUP_ID = -1002587301398
 GROUP_JOIN_LINK = "https://t.me/hupcodenhacai1"
 ADMIN_IDS = [7014048216]
@@ -54,7 +53,8 @@ async def is_member(user_id: int, context: ContextTypes.DEFAULT_TYPE):
     try:
         member = await context.bot.get_chat_member(GROUP_ID, user_id)
         return member.status in ['member', 'administrator', 'creator']
-    except:
+    except Exception as e:
+        print(f"Lỗi kiểm tra nhóm: {e}")
         return False
 
 # --- Start ---
@@ -101,19 +101,43 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text("Chào mừng bạn đến với bot!", reply_markup=InlineKeyboardMarkup(keyboard))
 
+# --- Button Callback Handler ---
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    if query.data == "balance":
+        balance = USER_DATA.get(user_id, {}).get("balance", 0)
+        await query.edit_message_text(f"💰 Số dư hiện tại của bạn: {balance}đ")
+    elif query.data == "ref":
+        ref_link = f"https://t.me/{context.bot.username}?start={user_id}"
+        ref_count = USER_DATA.get(user_id, {}).get("ref_count", 0)
+        await query.edit_message_text(f"👥 Mời bạn qua link: {ref_link}\nĐã mời: {ref_count} người")
+    elif query.data == "withdraw":
+        await query.edit_message_text("💸 Nhập số tiền bạn muốn rút (ví dụ: 20000):")
+        return WITHDRAW
+    elif query.data == "checkin":
+        now = datetime.datetime.now().date()
+        last_checkin = USER_DATA[user_id].get("last_checkin")
+        if last_checkin == now:
+            await query.edit_message_text("❌ Bạn đã điểm danh hôm nay rồi.")
+        else:
+            USER_DATA[user_id]["last_checkin"] = now
+            USER_DATA[user_id]["balance"] += 1000
+            await query.edit_message_text("✅ Điểm danh thành công! Bạn nhận được 1.000đ.")
+
 # --- Main ---
 if __name__ == '__main__':
-    import asyncio
-
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
-    # Bạn có thể thêm các handler khác tại đây
+    application.add_handler(CallbackQueryHandler(button_handler))
 
-    # Chạy auto_ping song song
     asyncio.get_event_loop().create_task(auto_ping())
 
-    # Chạy bot
     application.run_polling()
+USER_DATA:
+)
 
 
