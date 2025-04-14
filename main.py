@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- Config ---
-TOKEN = "8097927539:AAE4iAQS-O6pS27x0e3FQuVQY7gZE2qYXbI"
+TOKEN = "8083196694:AAEWTG5b94dHfvFuhMR5TaFrN7H1IJHxRb8"
 GROUP_ID = -1002587301398
 GROUP_JOIN_LINK = "https://t.me/hupcodenhacai1"
 ADMIN_IDS = [7014048216]
@@ -137,7 +137,3 @@ if __name__ == '__main__':
     asyncio.get_event_loop().create_task(auto_ping())
 
     application.run_polling()
-
-
-
-
