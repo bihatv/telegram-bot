@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- Config ---
-TOKEN = "8097927539:AAE4iAQS-O6pS27x0e3FQuVQY7gZE2qYXbI"
+TOKEN = "8083196694:AAGYjAtGhlLXv-ixj2l0FgcE0ic4c5ckq4A"
 GROUP_ID = -1002587301398
 GROUP_JOIN_LINK = "https://t.me/hupcodenhacai1"
 ADMIN_IDS = [7014048216]
